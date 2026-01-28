@@ -30,8 +30,8 @@ export default function Home() {
       {/* --- NAVBAR --- */}
       <nav
         className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled
-            ? 'bg-white/95 backdrop-blur-md shadow-md h-20 border-b border-slate-100'
-            : 'bg-transparent h-24 border-b border-white/10'
+          ? 'bg-white/95 backdrop-blur-md shadow-md h-20 border-b border-slate-100'
+          : 'bg-transparent h-24 border-none'
           }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
@@ -50,16 +50,22 @@ export default function Home() {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex space-x-10 items-center">
-              {['Início', 'Serviços', 'Sobre', 'Contacto'].map((item) => (
-                <Link
-                  key={item}
-                  href={`#${item.toLowerCase().replace('í', 'i').replace('ç', 'c')}`}
-                  className={`font-semibold text-sm tracking-wide transition-colors ${isScrolled ? 'text-slate-600 hover:text-[#1e4b85]' : 'text-blue-100 hover:text-white'
-                    }`}
-                >
-                  {item}
-                </Link>
-              ))}
+              {['Início', 'Serviços', 'Sobre', 'Contacto'].map((item) => {
+                const href = item === 'Início' ? '#inicio'
+                  : item === 'Serviços' ? '#services'
+                    : item === 'Sobre' ? '#about'
+                      : '#contact';
+                return (
+                  <Link
+                    key={item}
+                    href={href}
+                    className={`font-semibold text-sm tracking-wide transition-colors ${isScrolled ? 'text-slate-600 hover:text-[#1e4b85]' : 'text-blue-100 hover:text-white'
+                      }`}
+                  >
+                    {item}
+                  </Link>
+                );
+              })}
             </div>
 
             {/* CTA Button */}
@@ -67,8 +73,8 @@ export default function Home() {
               <Link
                 href="#contact"
                 className={`px-6 py-2.5 rounded-lg font-bold shadow-lg transition-all transform hover:-translate-y-0.5 duration-200 text-sm ${isScrolled
-                    ? 'bg-[#1e4b85] text-white hover:bg-[#163a66]'
-                    : 'bg-white text-[#1e4b85] hover:bg-blue-50'
+                  ? 'bg-[#1e4b85] text-white hover:bg-[#163a66]'
+                  : 'bg-white text-[#1e4b85] hover:bg-blue-50'
                   }`}
               >
                 Fale Connosco
@@ -98,49 +104,84 @@ export default function Home() {
       </nav>
 
       {/* --- HERO SECTION --- */}
-      <section id="home" className="h-screen bg-[#1e4b85] flex flex-col justify-center relative overflow-hidden pt-16">
-        {/* Subtle white gradient from bottom to top */}
-        <div className="absolute inset-0 bg-gradient-to-t from-white/10 via-transparent to-transparent pointer-events-none"></div>
+      <section id="inicio" className="relative h-screen flex items-center justify-center overflow-hidden bg-[linear-gradient(135deg,hsl(207,65%,25%)_0%,hsl(207,55%,40%)_100%)]">
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 flex flex-col items-center justify-center h-full">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(255,255,255,0.1)_0%,transparent_50%),radial-gradient(circle_at_75%_75%,rgba(255,255,255,0.05)_0%,transparent_50%)]" />
+        </div>
 
-          <div className="flex-1 flex flex-col justify-center items-center w-full max-w-4xl">
-            <div className="inline-block bg-white/10 backdrop-blur-md rounded-full px-5 py-1.5 mb-6 border border-white/20 shadow-lg">
-              <span className="text-blue-50 text-xs font-semibold tracking-wider uppercase">Consultoria | Seguros | Tecnologia</span>
+        {/* Animated Shapes (CSS version) */}
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-400/10 blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-white/10 blur-3xl animate-pulse delay-700" />
+
+        <div className="container mx-auto px-6 relative z-10 text-center flex flex-col justify-center h-full">
+          <div className="max-w-4xl mx-auto flex flex-col items-center justify-center">
+
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6 shadow-lg hover:bg-white/20 transition-colors cursor-default scale-90">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+              <span className="text-white/90 text-xs font-medium tracking-wide">
+                Consultoria | Seguros | Tecnologia
+              </span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight tracking-tight drop-shadow-sm">
-              Desbloqueamos <br /> o Seu Potencial
+            {/* Main Heading */}
+            <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-6 tracking-tight drop-shadow-lg">
+              Desbloqueamos
+              <br />
+              <span className="text-white/80">o Seu Potencial</span>
             </h1>
 
-            <p className="text-blue-100/90 text-base md:text-lg max-w-2xl mx-auto mb-8 font-light leading-relaxed">
-              Soluções integradas de consultoria estratégica, seguros personalizados e automação tecnológica.
+            {/* Subtitle */}
+            <p className="text-base md:text-lg text-blue-100/80 max-w-2xl mx-auto mb-8 leading-relaxed font-light">
+              Soluções integradas de consultoria estratégica, seguros personalizados
+              e automação tecnológica para impulsionar o crescimento do seu negócio.
             </p>
 
-            <div className="flex flex-row gap-4 justify-center mb-10 w-full">
-              <Link href="#services" className="bg-white text-[#1e4b85] px-6 py-3 rounded-lg font-bold hover:bg-blue-50 transition flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:-translate-y-0.5 text-sm transform duration-300">
-                Descobrir Serviços <ArrowRight size={16} strokeWidth={2.5} />
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+              <Link
+                href="#services"
+                className="group px-6 py-3 bg-white text-[#1e4b85] rounded-xl font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 text-sm"
+              >
+                Descobrir Serviços
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" strokeWidth={3} />
               </Link>
-              <Link href="#contact" className="bg-white/10 backdrop-blur-sm border border-white/30 text-white px-6 py-3 rounded-lg font-bold hover:bg-white/20 transition shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm transform duration-300">
-                Fale Connosco
+              <Link
+                href="#contact"
+                className="px-6 py-3 bg-transparent border border-white/30 text-white rounded-xl font-bold hover:bg-white/10 backdrop-blur-sm transition-all duration-300 text-sm"
+              >
+                Agendar Consulta
               </Link>
             </div>
 
-            {/* Bottom Cards in Hero - Highly Compact */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-              <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-full border border-white/20 flex items-center justify-center gap-3 text-white hover:bg-white/20 transition cursor-default group hover:scale-[1.01] duration-300 shadow-md">
-                <TrendingUp size={18} className="text-blue-200 group-hover:text-white transition" />
-                <span className="font-semibold text-sm tracking-wide">Consultoria</span>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-full border border-white/20 flex items-center justify-center gap-3 text-white hover:bg-white/20 transition cursor-default group hover:scale-[1.01] duration-300 shadow-md">
-                <Shield size={18} className="text-blue-200 group-hover:text-white transition" />
-                <span className="font-semibold text-sm tracking-wide">Seguros</span>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-full border border-white/20 flex items-center justify-center gap-3 text-white hover:bg-white/20 transition cursor-default group hover:scale-[1.01] duration-300 shadow-md">
-                <Cpu size={18} className="text-blue-200 group-hover:text-white transition" />
-                <span className="font-semibold text-sm tracking-wide">Tecnologia</span>
-              </div>
+            {/* Feature Pills */}
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {[
+                { icon: TrendingUp, label: "Consultoria Estratégica" },
+                { icon: Shield, label: "Seguros Personalizados" },
+                { icon: Cpu, label: "Automação Inteligente" },
+              ].map((item, index) => (
+                <div
+                  key={item.label}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors cursor-default"
+                >
+                  <item.icon className="w-4 h-4 text-blue-200" />
+                  <span className="text-white/80 text-xs font-medium">
+                    {item.label}
+                  </span>
+                </div>
+              ))}
             </div>
+
+          </div>
+        </div>
+
+        {/* Scroll Indicator - Made smaller and closer */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 animate-bounce opacity-70">
+          <div className="w-5 h-8 rounded-full border-2 border-white/20 flex items-start justify-center p-1.5">
+            <div className="w-1 h-1 rounded-full bg-white/50" />
           </div>
         </div>
       </section>
@@ -377,7 +418,6 @@ export default function Home() {
                 Soluções integradas de consultoria, seguros e tecnologia para impulsionar o crescimento sustentável do seu negócio.
               </p>
               <div className="flex gap-4">
-                <a href="#" className="w-10 h-10 bg-white/5 rounded flex items-center justify-center hover:bg-[#1e4b85] transition"><Linkedin size={18} /></a>
                 <a href="#" className="w-10 h-10 bg-white/5 rounded flex items-center justify-center hover:bg-[#1e4b85] transition"><Mail size={18} /></a>
               </div>
             </div>
