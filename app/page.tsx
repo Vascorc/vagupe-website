@@ -4,17 +4,29 @@ import {
   Menu, X, TrendingUp, Shield, Cpu,
   ArrowRight, CheckCircle2, Target, Users,
   Award, Lightbulb, Mail, Phone, MapPin,
-  Linkedin, Facebook, Instagram
+  Linkedin, Facebook, Instagram, Globe
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import React, { useState } from 'react';
+import { translations } from './translations';
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [language, setLanguage] = useState<'pt' | 'en'>('pt');
+
+  const t = translations[language];
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const element = document.getElementById(href.replace('#', ''));
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -50,15 +62,17 @@ export default function Home() {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex space-x-10 items-center">
-              {['Início', 'Serviços', 'Sobre', 'Contacto'].map((item) => {
-                const href = item === 'Início' ? '#inicio'
-                  : item === 'Serviços' ? '#services'
-                    : item === 'Sobre' ? '#about'
+              {(['inicio', 'servicos', 'sobre', 'contact'] as const).map((key) => {
+                const item = t.nav[key];
+                const href = key === 'inicio' ? '#inicio'
+                  : key === 'servicos' ? '#services'
+                    : key === 'sobre' ? '#about'
                       : '#contact';
                 return (
                   <Link
-                    key={item}
+                    key={key}
                     href={href}
+                    onClick={(e) => scrollToSection(e, href)}
                     className={`font-semibold text-sm tracking-wide transition-colors ${isScrolled ? 'text-slate-600 hover:text-[#1e4b85]' : 'text-blue-100 hover:text-white'
                       }`}
                   >
@@ -68,16 +82,25 @@ export default function Home() {
               })}
             </div>
 
-            {/* CTA Button */}
-            <div className="hidden md:flex">
+            {/* CTA Button & Language Switcher */}
+            <div className="hidden md:flex items-center gap-4">
+              <button
+                onClick={() => setLanguage(l => l === 'pt' ? 'en' : 'pt')}
+                className={`flex items-center gap-2 font-bold text-sm transition-colors ${isScrolled ? 'text-slate-600 hover:text-[#1e4b85]' : 'text-blue-100 hover:text-white'}`}
+              >
+                <Globe size={18} />
+                <span>{language.toUpperCase()}</span>
+              </button>
+
               <Link
                 href="#contact"
+                onClick={(e) => scrollToSection(e, '#contact')}
                 className={`px-6 py-2.5 rounded-lg font-bold shadow-lg transition-all transform hover:-translate-y-0.5 duration-200 text-sm ${isScrolled
                   ? 'bg-[#1e4b85] text-white hover:bg-[#163a66]'
                   : 'bg-white text-[#1e4b85] hover:bg-blue-50'
                   }`}
               >
-                Fale Connosco
+                {t.nav.faleConnosco}
               </Link>
             </div>
 
@@ -94,10 +117,20 @@ export default function Home() {
         {isMenuOpen && (
           <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full shadow-xl">
             <div className="px-4 pt-4 pb-6 space-y-2">
-              <Link href="#home" onClick={toggleMenu} className="block px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg font-medium">Início</Link>
-              <Link href="#services" onClick={toggleMenu} className="block px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg font-medium">Serviços</Link>
-              <Link href="#about" onClick={toggleMenu} className="block px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg font-medium">Sobre</Link>
-              <Link href="#contact" onClick={toggleMenu} className="block px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg font-medium">Contacto</Link>
+              <Link href="#inicio" onClick={(e) => { toggleMenu(); scrollToSection(e, '#inicio'); }} className="block px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg font-medium">{t.nav.inicio}</Link>
+              <Link href="#services" onClick={(e) => { toggleMenu(); scrollToSection(e, '#services'); }} className="block px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg font-medium">{t.nav.servicos}</Link>
+              <Link href="#about" onClick={(e) => { toggleMenu(); scrollToSection(e, '#about'); }} className="block px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg font-medium">{t.nav.sobre}</Link>
+              <Link href="#contact" onClick={(e) => { toggleMenu(); scrollToSection(e, '#contact'); }} className="block px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg font-medium">{t.nav.contact}</Link>
+
+              <div className="border-t border-slate-200 mt-2 pt-2">
+                <button
+                  onClick={() => { setLanguage(l => l === 'pt' ? 'en' : 'pt'); toggleMenu(); }}
+                  className="flex items-center gap-3 px-4 py-3 text-slate-700 w-full hover:bg-slate-50 rounded-lg font-medium"
+                >
+                  <Globe size={18} />
+                  <span>{language === 'pt' ? 'Mudar para Inglês' : 'Switch to Portuguese'}</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -122,59 +155,59 @@ export default function Home() {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6 shadow-lg hover:bg-white/20 transition-colors cursor-default scale-90">
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
               <span className="text-white/90 text-xs font-medium tracking-wide">
-                Consultoria | Seguros | Tecnologia
+                {t.hero.badge}
               </span>
             </div>
 
             {/* Main Heading */}
             <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-6 tracking-tight drop-shadow-lg">
-              Desbloqueamos
+              {t.hero.title1}
               <br />
-              <span className="text-white/80">o Seu Potencial</span>
+              <span className="text-white/80">{t.hero.title2}</span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-base md:text-lg text-blue-100/80 max-w-2xl mx-auto mb-8 leading-relaxed font-light">
-              Soluções integradas de consultoria estratégica, seguros personalizados
-              e automação tecnológica para impulsionar o crescimento do seu negócio.
+              {t.hero.subtitle}
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
               <Link
                 href="#services"
+                onClick={(e) => scrollToSection(e, '#services')}
                 className="group px-6 py-3 bg-white text-[#1e4b85] rounded-xl font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 text-sm"
               >
-                Descobrir Serviços
+                {t.hero.btnServices}
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" strokeWidth={3} />
               </Link>
               <Link
                 href="#contact"
+                onClick={(e) => scrollToSection(e, '#contact')}
                 className="px-6 py-3 bg-transparent border border-white/30 text-white rounded-xl font-bold hover:bg-white/10 backdrop-blur-sm transition-all duration-300 text-sm"
               >
-                Agendar Consulta
+                {t.hero.btnSchedule}
               </Link>
             </div>
 
             {/* Feature Pills */}
             <div className="flex flex-wrap items-center justify-center gap-3">
-              {[
-                { icon: TrendingUp, label: "Consultoria Estratégica" },
-                { icon: Shield, label: "Seguros Personalizados" },
-                { icon: Cpu, label: "Automação Inteligente" },
-              ].map((item, index) => (
-                <div
-                  key={item.label}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors cursor-default"
-                >
-                  <item.icon className="w-4 h-4 text-blue-200" />
-                  <span className="text-white/80 text-xs font-medium">
-                    {item.label}
-                  </span>
-                </div>
-              ))}
+              {t.hero.pills.map((label, index) => {
+                const icons = [TrendingUp, Shield, Cpu];
+                const Icon = icons[index];
+                return (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors cursor-default"
+                  >
+                    <Icon className="w-4 h-4 text-blue-200" />
+                    <span className="text-white/80 text-xs font-medium">
+                      {label}
+                    </span>
+                  </div>
+                )
+              })}
             </div>
-
           </div>
         </div>
 
@@ -190,76 +223,39 @@ export default function Home() {
       <section id="services" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="text-[#1e4b85] font-semibold text-sm tracking-wider uppercase">Os Nossos Serviços</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mt-3 mb-4">Soluções Integradas para o Seu Sucesso</h2>
+            <span className="text-[#1e4b85] font-semibold text-sm tracking-wider uppercase">{t.services.label}</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mt-3 mb-4">{t.services.title}</h2>
             <p className="text-slate-600 max-w-2xl mx-auto">
-              Combinamos experiência em consultoria, seguros e tecnologia para oferecer soluções completas que impulsionam o seu negócio.
+              {t.services.desc}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Service 1 */}
-            <div className="border border-slate-100 rounded-2xl p-8 hover:shadow-xl transition duration-300 bg-white group">
-              <div className="w-14 h-14 bg-blue-50 rounded-lg flex items-center justify-center mb-6 group-hover:bg-[#1e4b85] transition-colors">
-                <TrendingUp className="text-[#1e4b85] group-hover:text-white transition-colors" size={28} />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Consultoria Estratégica</h3>
-              <p className="text-slate-600 mb-6 text-sm leading-relaxed">
-                Análise profunda do seu negócio para identificar oportunidades de crescimento e otimização de processos.
-              </p>
-              <ul className="space-y-3 mb-8">
-                {['Análise de mercado', 'Planeamento estratégico', 'Otimização de processos', 'Gestão de mudança'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm text-slate-600">
-                    <CheckCircle2 size={16} className="text-[#1e4b85]" /> {item}
-                  </li>
-                ))}
-              </ul>
-              <Link href="#" className="text-[#1e4b85] font-semibold flex items-center gap-2 text-sm hover:gap-3 transition-all">
-                Saber Mais <ArrowRight size={16} />
-              </Link>
-            </div>
-
-            {/* Service 2 */}
-            <div className="border border-slate-100 rounded-2xl p-8 hover:shadow-xl transition duration-300 bg-white group">
-              <div className="w-14 h-14 bg-blue-50 rounded-lg flex items-center justify-center mb-6 group-hover:bg-[#1e4b85] transition-colors">
-                <Shield className="text-[#1e4b85] group-hover:text-white transition-colors" size={28} />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Seguros Empresariais</h3>
-              <p className="text-slate-600 mb-6 text-sm leading-relaxed">
-                Soluções de proteção personalizadas que garantem a segurança e continuidade do seu negócio.
-              </p>
-              <ul className="space-y-3 mb-8">
-                {['Responsabilidade Civil', 'Proteção de ativos', 'Seguros de saúde', 'Gestão de riscos'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm text-slate-600">
-                    <CheckCircle2 size={16} className="text-[#1e4b85]" /> {item}
-                  </li>
-                ))}
-              </ul>
-              <Link href="#" className="text-[#1e4b85] font-semibold flex items-center gap-2 text-sm hover:gap-3 transition-all">
-                Saber Mais <ArrowRight size={16} />
-              </Link>
-            </div>
-
-            {/* Service 3 */}
-            <div className="border border-slate-100 rounded-2xl p-8 hover:shadow-xl transition duration-300 bg-white group">
-              <div className="w-14 h-14 bg-blue-50 rounded-lg flex items-center justify-center mb-6 group-hover:bg-[#1e4b85] transition-colors">
-                <Cpu className="text-[#1e4b85] group-hover:text-white transition-colors" size={28} />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Soluções Tecnológicas</h3>
-              <p className="text-slate-600 mb-6 text-sm leading-relaxed">
-                Automação e digitalização de processos para aumentar a eficiência e competitividade da sua empresa.
-              </p>
-              <ul className="space-y-3 mb-8">
-                {['Automação (RPA)', 'Integração de sistemas', 'Desenvolvimento', 'Inteligência Artificial'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm text-slate-600">
-                    <CheckCircle2 size={16} className="text-[#1e4b85]" /> {item}
-                  </li>
-                ))}
-              </ul>
-              <Link href="#" className="text-[#1e4b85] font-semibold flex items-center gap-2 text-sm hover:gap-3 transition-all">
-                Saber Mais <ArrowRight size={16} />
-              </Link>
-            </div>
+            {t.services.items.map((service, index) => {
+              const icons = [TrendingUp, Shield, Cpu];
+              const Icon = icons[index];
+              return (
+                <div key={index} className="border border-slate-100 rounded-2xl p-8 hover:shadow-xl transition duration-300 bg-white group">
+                  <div className="w-14 h-14 bg-blue-50 rounded-lg flex items-center justify-center mb-6 group-hover:bg-[#1e4b85] transition-colors">
+                    <Icon className="text-[#1e4b85] group-hover:text-white transition-colors" size={28} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 text-slate-900">{service.title}</h3>
+                  <p className="text-slate-600 mb-6 text-sm leading-relaxed">
+                    {service.desc}
+                  </p>
+                  <ul className="space-y-3 mb-8">
+                    {service.features.map((item, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm text-slate-600">
+                        <CheckCircle2 size={16} className="text-[#1e4b85]" /> {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <Link href="#" className="text-[#1e4b85] font-semibold flex items-center gap-2 text-sm hover:gap-3 transition-all">
+                    {service.cta} <ArrowRight size={16} />
+                  </Link>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -271,49 +267,41 @@ export default function Home() {
 
             {/* Left Content */}
             <div>
-              <span className="text-[#1e4b85] font-semibold text-sm tracking-wider uppercase mb-2 block">Sobre a VAGUPE</span>
+              <span className="text-[#1e4b85] font-semibold text-sm tracking-wider uppercase mb-2 block">{t.about.label}</span>
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-                Desbloqueamos Potencial. <br /> Entregamos Clareza.
+                {t.about.titleLine1} <br /> {t.about.titleLine2}
               </h2>
               <p className="text-slate-600 mb-6 leading-relaxed">
-                A VAGUPE é uma empresa de consultoria integrada que combina expertise em estratégia empresarial, gestão de riscos e inovação tecnológica para ajudar organizações a alcançar o seu máximo potencial.
+                {t.about.desc1}
               </p>
               <p className="text-slate-600 mb-10 leading-relaxed">
-                Com uma abordagem holística e orientada para resultados, oferecemos soluções personalizadas que respondem aos desafios específicos de cada cliente.
+                {t.about.desc2}
               </p>
 
               <div className="grid grid-cols-3 gap-8 border-t border-slate-200 pt-8">
-                <div>
-                  <div className="text-3xl font-bold text-[#1e4b85] mb-1">10+</div>
-                  <div className="text-sm text-slate-500">Anos de Experiência</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-[#1e4b85] mb-1">200+</div>
-                  <div className="text-sm text-slate-500">Clientes Satisfeitos</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-[#1e4b85] mb-1">95%</div>
-                  <div className="text-sm text-slate-500">Taxa de Retenção</div>
-                </div>
+                {t.about.stats.map((stat, idx) => (
+                  <div key={idx}>
+                    <div className="text-3xl font-bold text-[#1e4b85] mb-1">{stat.value}</div>
+                    <div className="text-sm text-slate-500">{stat.label}</div>
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* Right Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {[
-                { icon: Target, title: "Foco em Resultados", desc: "Cada estratégia é desenhada para gerar impacto mensurável." },
-                { icon: Users, title: "Parceria Duradoura", desc: "Construímos relações de confiança baseadas na transparência." },
-                { icon: Award, title: "Excelência", desc: "Entregamos soluções de qualidade superior com equipas especializadas." },
-                { icon: Lightbulb, title: "Inovação", desc: "Aplicamos as mais recentes tecnologias e metodologias." }
-              ].map((item, idx) => (
+              {t.about.cards.map((item, idx) => {
+                 const icons = [Target, Users, Award, Lightbulb];
+                 const Icon = icons[idx];
+                 return (
                 <div key={idx} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition">
                   <div className="w-10 h-10 bg-blue-50 rounded flex items-center justify-center mb-4 text-[#1e4b85]">
-                    <item.icon size={20} />
+                    <Icon size={20} />
                   </div>
                   <h4 className="font-bold text-slate-900 mb-2">{item.title}</h4>
                   <p className="text-sm text-slate-600 leading-snug">{item.desc}</p>
                 </div>
-              ))}
+              )})}
             </div>
           </div>
         </div>
@@ -326,12 +314,12 @@ export default function Home() {
 
             {/* Info Side */}
             <div>
-              <span className="text-[#1e4b85] font-semibold text-sm tracking-wider uppercase mb-2 block">Contacto</span>
+              <span className="text-[#1e4b85] font-semibold text-sm tracking-wider uppercase mb-2 block">{t.contact.label}</span>
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-                Vamos Conversar Sobre <br /> o Seu Projeto
+                {t.contact.title1} <br /> {t.contact.title2}
               </h2>
               <p className="text-slate-600 mb-10 text-lg">
-                Estamos prontos para ouvir os seus desafios e apresentar soluções personalizadas. Agende uma consulta gratuita hoje.
+                {t.contact.desc}
               </p>
 
               <div className="space-y-6 mb-12">
@@ -340,17 +328,8 @@ export default function Home() {
                     <Mail size={20} />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900">Email</h4>
-                    <p className="text-slate-600">info@vagupe.com</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-[#1e4b85] shrink-0">
-                    <Phone size={20} />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900">Telefone</h4>
-                    <p className="text-slate-600">+351 21X XXX XXX</p>
+                    <h4 className="font-semibold text-slate-900">{t.contact.info.emailLabel}</h4>
+                    <p className="text-slate-600">{t.contact.info.emailValue}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -358,43 +337,43 @@ export default function Home() {
                     <MapPin size={20} />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900">Localização</h4>
-                    <p className="text-slate-600">Lisboa, Portugal</p>
+                    <h4 className="font-semibold text-slate-900">{t.contact.info.locLabel}</h4>
+                    <p className="text-slate-600">{t.contact.info.locValue}</p>
                   </div>
                 </div>
               </div>
 
               <div className="flex gap-6 text-sm text-slate-500">
-                <div className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#1e4b85]" /> Resposta em 24h</div>
-                <div className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#1e4b85]" /> Consulta Gratuita</div>
-                <div className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#1e4b85]" /> 100% Confidencial</div>
+                {t.contact.checks.map((check, i) => (
+                   <div key={i} className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#1e4b85]" /> {check}</div>
+                ))}
               </div>
             </div>
 
             {/* Form Side */}
             <div className="bg-white border border-slate-100 p-8 rounded-2xl shadow-lg">
-              <h3 className="text-xl font-bold text-slate-800 mb-6">Envie-nos uma Mensagem</h3>
+              <h3 className="text-xl font-bold text-slate-800 mb-6">{t.contact.form.title}</h3>
               <form className="space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Nome Completo</label>
-                    <input type="text" placeholder="O seu nome" className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#1e4b85] focus:ring-1 focus:ring-[#1e4b85] outline-none transition" />
+                    <label className="text-sm font-medium text-slate-700">{t.contact.form.name}</label>
+                    <input type="text" placeholder={t.contact.form.namePh} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#1e4b85] focus:ring-1 focus:ring-[#1e4b85] outline-none transition" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Email</label>
-                    <input type="email" placeholder="email@empresa.com" className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#1e4b85] focus:ring-1 focus:ring-[#1e4b85] outline-none transition" />
+                    <label className="text-sm font-medium text-slate-700">{t.contact.form.email}</label>
+                    <input type="email" placeholder={t.contact.form.emailPh} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#1e4b85] focus:ring-1 focus:ring-[#1e4b85] outline-none transition" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">Empresa</label>
-                  <input type="text" placeholder="Nome da empresa" className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#1e4b85] focus:ring-1 focus:ring-[#1e4b85] outline-none transition" />
+                  <label className="text-sm font-medium text-slate-700">{t.contact.form.company}</label>
+                  <input type="text" placeholder={t.contact.form.companyPh} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#1e4b85] focus:ring-1 focus:ring-[#1e4b85] outline-none transition" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">Mensagem</label>
-                  <textarea rows={4} placeholder="Descreva o seu projeto..." className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#1e4b85] focus:ring-1 focus:ring-[#1e4b85] outline-none transition resize-none"></textarea>
+                  <label className="text-sm font-medium text-slate-700">{t.contact.form.msg}</label>
+                  <textarea rows={4} placeholder={t.contact.form.msgPh} className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#1e4b85] focus:ring-1 focus:ring-[#1e4b85] outline-none transition resize-none"></textarea>
                 </div>
                 <button className="w-full bg-[#1e4b85] text-white font-bold py-4 rounded-lg hover:bg-[#163a66] transition flex items-center justify-center gap-2">
-                  Enviar Mensagem <ArrowRight size={18} />
+                  {t.contact.form.btn} <ArrowRight size={18} />
                 </button>
               </form>
             </div>
@@ -415,7 +394,7 @@ export default function Home() {
                 <span className="font-bold text-xl">VAGUPE</span>
               </div>
               <p className="text-sm text-slate-400 mb-6 leading-relaxed">
-                Soluções integradas de consultoria, seguros e tecnologia para impulsionar o crescimento sustentável do seu negócio.
+                {t.footer.desc}
               </p>
               <div className="flex gap-4">
                 <a href="#" className="w-10 h-10 bg-white/5 rounded flex items-center justify-center hover:bg-[#1e4b85] transition"><Mail size={18} /></a>
@@ -424,37 +403,35 @@ export default function Home() {
 
             {/* Links Columns */}
             <div>
-              <h4 className="text-white font-bold mb-6">Serviços</h4>
+              <h4 className="text-white font-bold mb-6">{t.footer.cols.services}</h4>
               <ul className="space-y-3 text-sm">
-                <li><a href="#" className="hover:text-white transition">Consultoria Estratégica</a></li>
-                <li><a href="#" className="hover:text-white transition">Seguros Empresariais</a></li>
-                <li><a href="#" className="hover:text-white transition">Soluções Tecnológicas</a></li>
-                <li><a href="#" className="hover:text-white transition">Automação</a></li>
+                {t.footer.links.services.map((item, i) => (
+                  <li key={i}><a href="#" className="hover:text-white transition">{item}</a></li>
+                ))}
               </ul>
             </div>
 
             <div>
-              <h4 className="text-white font-bold mb-6">Empresa</h4>
+              <h4 className="text-white font-bold mb-6">{t.footer.cols.company}</h4>
               <ul className="space-y-3 text-sm">
-                <li><a href="#" className="hover:text-white transition">Sobre Nós</a></li>
-                <li><a href="#" className="hover:text-white transition">Carreiras</a></li>
-                <li><a href="#" className="hover:text-white transition">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition">Contacto</a></li>
+                {t.footer.links.company.map((item, i) => (
+                  <li key={i}><a href="#" className="hover:text-white transition">{item}</a></li>
+                ))}
               </ul>
             </div>
 
             <div>
-              <h4 className="text-white font-bold mb-6">Legal</h4>
+              <h4 className="text-white font-bold mb-6">{t.footer.cols.legal}</h4>
               <ul className="space-y-3 text-sm">
-                <li><a href="#" className="hover:text-white transition">Política de Privacidade</a></li>
-                <li><a href="#" className="hover:text-white transition">Termos de Serviço</a></li>
-                <li><a href="#" className="hover:text-white transition">Cookies</a></li>
+                 {t.footer.links.legal.map((item, i) => (
+                  <li key={i}><a href="#" className="hover:text-white transition">{item}</a></li>
+                ))}
               </ul>
             </div>
           </div>
 
           <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
-            <p>© 2026 VAGUPE Consulting. Todos os direitos reservados.</p>
+            <p>{t.footer.rights}</p>
             <p>Unlocking Potential. Delivering Clarity.</p>
           </div>
         </div>
