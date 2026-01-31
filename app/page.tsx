@@ -55,7 +55,7 @@ export default function Home() {
                 alt="VAGUPE Consulting"
                 width={180}
                 height={54}
-                className={`h-12 w-auto object-contain transition-all duration-300 ${isScrolled ? '' : 'brightness-0 invert opacity-90'}`}
+                className="h-12 w-auto object-contain transition-all duration-300"
                 priority
               />
             </div>
@@ -291,17 +291,18 @@ export default function Home() {
             {/* Right Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {t.about.cards.map((item, idx) => {
-                 const icons = [Target, Users, Award, Lightbulb];
-                 const Icon = icons[idx];
-                 return (
-                <div key={idx} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition">
-                  <div className="w-10 h-10 bg-blue-50 rounded flex items-center justify-center mb-4 text-[#1e4b85]">
-                    <Icon size={20} />
+                const icons = [Target, Users, Award, Lightbulb];
+                const Icon = icons[idx];
+                return (
+                  <div key={idx} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition">
+                    <div className="w-10 h-10 bg-blue-50 rounded flex items-center justify-center mb-4 text-[#1e4b85]">
+                      <Icon size={20} />
+                    </div>
+                    <h4 className="font-bold text-slate-900 mb-2">{item.title}</h4>
+                    <p className="text-sm text-slate-600 leading-snug">{item.desc}</p>
                   </div>
-                  <h4 className="font-bold text-slate-900 mb-2">{item.title}</h4>
-                  <p className="text-sm text-slate-600 leading-snug">{item.desc}</p>
-                </div>
-              )})}
+                )
+              })}
             </div>
           </div>
         </div>
@@ -345,7 +346,7 @@ export default function Home() {
 
               <div className="flex gap-6 text-sm text-slate-500">
                 {t.contact.checks.map((check, i) => (
-                   <div key={i} className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#1e4b85]" /> {check}</div>
+                  <div key={i} className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#1e4b85]" /> {check}</div>
                 ))}
               </div>
             </div>
@@ -423,7 +424,7 @@ export default function Home() {
             <div>
               <h4 className="text-white font-bold mb-6">{t.footer.cols.legal}</h4>
               <ul className="space-y-3 text-sm">
-                 {t.footer.links.legal.map((item, i) => (
+                {t.footer.links.legal.map((item, i) => (
                   <li key={i}><a href="#" className="hover:text-white transition">{item}</a></li>
                 ))}
               </ul>
